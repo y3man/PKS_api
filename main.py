@@ -6,6 +6,7 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 import jwt
 from jwt.exceptions import InvalidTokenError
 from pydantic import BaseModel
+from starlette.responses import RedirectResponse
 
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 SECRET_KEY = "B9JUtEup1FAoj9jkr1PoF7FDv8XLszYYqNMKfahjeBpNw2t4ud0gtgEZ8BHarNqV"
@@ -82,3 +83,7 @@ async def say_hello(name: str, token: Annotated[str, Depends(get_current_user)])
     return {"message": f"Hello {name}"}
 
 
+@app.get("/link")
+async def rickroll():
+    return {"message": "Zaujimava stranka", "url": "bit.ly/3F3QgyV"}
+    # return RedirectResponse("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
