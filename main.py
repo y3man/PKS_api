@@ -3,10 +3,15 @@ from datetime import datetime, timedelta
 
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi.responses import JSONResponse
+
 import jwt
 from jwt.exceptions import InvalidTokenError
+
 from pydantic import BaseModel
-from starlette.responses import RedirectResponse
+# from starlette.responses import RedirectResponse
+
+import json
 
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 SECRET_KEY = "B9JUtEup1FAoj9jkr1PoF7FDv8XLszYYqNMKfahjeBpNw2t4ud0gtgEZ8BHarNqV"
@@ -75,7 +80,11 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
 
 @app.get("/")
 async def root():
-    return {"message": "Hello World"}
+    return {"webmap":
+    {"/token": "Prihlasenie a ziskanie tokenu",
+    "/link": "Zaujimava stranka",
+    "/methods": "HTTP methods and response codes"}
+}
 
 
 @app.get("/hello/{name}")
@@ -87,3 +96,9 @@ async def say_hello(name: str, token: Annotated[str, Depends(get_current_user)])
 async def rickroll():
     return {"message": "Zaujimava stranka", "url": "bit.ly/3F3QgyV"}
     # return RedirectResponse("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
+
+@app.get("/methods")
+async def methods(token: Annotated[str, Depends(get_current_user)]):
+    with open("methods.json", "r") as f:
+        response = json.load(f)
+    return response

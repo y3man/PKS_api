@@ -1,0 +1,17 @@
+{"HTTP methods":
+    {"GET": "The GET method requests a representation of the specified resource. Requests using GET should only retrieve data.",
+    "POST": "The POST method is used to submit an entity to the specified resource, often causing a change in state or side effects on the server.",
+    "PUT": "The PUT method replaces all current representations of the target resource with the request payload.",
+    "DELETE": "The DELETE method deletes the specified resource.",
+    "PATCH": "The PATCH method is used to apply partial modifications to a resource.",
+    "HEAD": "The HEAD method asks for a response identical to that of a GET request, but without the response body.",
+    "OPTIONS": "The OPTIONS method is used to describe the communication options for the target resource.",
+    "CONNECT": "The CONNECT method establishes a tunnel to the server identified by the target resource.",
+    "TRACE": "The TRACE method performs a message loop-back test along the path to the target resource."},
+"HTTP status codes":
+    {"1xx Informational": "The request was received, continuing process",
+    "2xx Success": "The request was successfully received, understood, and accepted",
+    "3xx Redirection": "Further action needs to be taken in order to complete the request",
+    "4xx Client Error": "The request contains bad syntax or cannot be fulfilled",
+    "5xx Server Error": "The server failed to fulfill an apparently valid request"}
+}
