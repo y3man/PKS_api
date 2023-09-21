@@ -84,7 +84,8 @@ async def root():
     return {"webmap":
     {"/token": "Prihlasenie a ziskanie tokenu",
     "/link": "Zaujimava stranka",
-    "/methods": "HTTP methods and response codes"}
+    "/methods": "HTTP methods and response codes",
+    "/weather": "Weather forecast in Bratislava"}
 }
 
 
@@ -104,7 +105,7 @@ async def methods(token: Annotated[str, Depends(get_current_user)]):
         response = json.load(f)
     return response
 
-@app.get("/current_weather")
+@app.get("/weather")
 async def current_weather(token: Annotated[str, Depends(get_current_user)]):
     request = requests.get("https://api.open-meteo.com/v1/forecast?latitude=48.1486&longitude=17.1077&daily=weathercode,temperature_2m_max,temperature_2m_min,sunrise,sunset,precipitation_sum&timezone=Europe%2FBerlin&forecast_days=1")
     response = json.loads(request.text)
