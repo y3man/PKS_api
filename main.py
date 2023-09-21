@@ -12,6 +12,7 @@ from pydantic import BaseModel
 # from starlette.responses import RedirectResponse
 
 import json
+import requests
 
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 SECRET_KEY = "B9JUtEup1FAoj9jkr1PoF7FDv8XLszYYqNMKfahjeBpNw2t4ud0gtgEZ8BHarNqV"
@@ -102,3 +103,9 @@ async def methods(token: Annotated[str, Depends(get_current_user)]):
     with open("methods.json", "r") as f:
         response = json.load(f)
     return response
+
+@app.get("/current_weather")
+async def current_weather(token: Annotated[str, Depends(get_current_user)]):
+    request = requests.get("https://api.open-meteo.com/v1/forecast?latitude=48.1486&longitude=17.1077&daily=weathercode,temperature_2m_max,temperature_2m_min,sunrise,sunset,precipitation_sum&timezone=Europe%2FBerlin&forecast_days=1")
+    response = json.loads(request.text)
+    return response["daily"]
