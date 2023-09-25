@@ -86,7 +86,9 @@ async def root():
     "/link": "Zaujimava stranka",
     "/methods": "HTTP methods and response codes",
     "/weather": "Weather forecast in Bratislava",
-    "/currency": "Currency exchange rates (EUR, USD, GBP, CZK)"}
+    "/currency": "Currency exchange rates (EUR, USD, GBP, CZK)",
+    "/vat": "VAT rates in EU",
+    "/vat/{country}": "VAT rate in specific country"}
 }
 
 
@@ -119,13 +121,13 @@ async def currency_exchange(token: Annotated[str, Depends(get_current_user)]):
     return response["rates"]
 
 @app.get("/vat")
-async def vat():
+async def vat(token: Annotated[str, Depends(get_current_user)]):
     request = requests.get("https://euvatrates.com/rates.json")
     response = json.loads(request.text)
     return response["rates"]
 
 @app.get("/vat/{country}")
-async def vat_country(country: str):
+async def vat_country(country: str, token: Annotated[str, Depends(get_current_user)]):
     request = requests.get("https://euvatrates.com/rates.json")
     try:
         response = json.loads(request.text)["rates"][country.upper()]
