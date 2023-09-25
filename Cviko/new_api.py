@@ -1,7 +1,8 @@
 import requests # install requests package
 import json
 
-url = "http://127.0.0.1:8000"
+port = 9000
+url = f"http://127.0.0.1:{port}"
 
 def get_token(username: str = "student", password: str = "student"):
     token = json.loads(requests.post(url + "/token", data={"username": username, "password": password}).text)
