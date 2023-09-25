@@ -81,11 +81,12 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
 
 @app.get("/")
 async def root():
-    return {"webmap":
+    return {"sitemap":
     {"/token": "Prihlasenie a ziskanie tokenu",
     "/link": "Zaujimava stranka",
     "/methods": "HTTP methods and response codes",
-    "/weather": "Weather forecast in Bratislava"}
+    "/weather": "Weather forecast in Bratislava",
+    "/currency": "Currency exchange rates (EUR, USD, GBP, CZK)"}
 }
 
 
@@ -110,3 +111,24 @@ async def current_weather(token: Annotated[str, Depends(get_current_user)]):
     request = requests.get("https://api.open-meteo.com/v1/forecast?latitude=48.1486&longitude=17.1077&daily=weathercode,temperature_2m_max,temperature_2m_min,sunrise,sunset,precipitation_sum&timezone=Europe%2FBerlin&forecast_days=1")
     response = json.loads(request.text)
     return response["daily"]
+
+@app.get("/currency")
+async def currency_exchange(token: Annotated[str, Depends(get_current_user)]):
+    request = requests.get("https://api.exchangerate.host/latest?base=EUR&symbols=USD,GBP,CZK")
+    response = json.loads(request.text)
+    return response["rates"]
+
+@app.get("/vat")
+async def vat():
+    request = requests.get("https://euvatrates.com/rates.json")
+    response = json.loads(request.text)
+    return response["rates"]
+
+@app.get("/vat/{country}")
+async def vat_country(country: str):
+    request = requests.get("https://euvatrates.com/rates.json")
+    try:
+        response = json.loads(request.text)["rates"][country.upper()]
+    except KeyError:
+        raise HTTPException(status_code=404, detail="Krajina neexistuje")
+    return response
