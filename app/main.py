@@ -91,12 +91,6 @@ async def root():
     "/vat/{country}": "VAT rate in specific country"}
 }
 
-
-@app.get("/hello/{name}")
-async def say_hello(name: str, token: Annotated[str, Depends(get_current_user)]):
-    return {"message": f"Hello {name}"}
-
-
 @app.get("/link")
 async def rickroll():
     return {"message": "Zaujimava stranka", "url": "bit.ly/3F3QgyV"}
