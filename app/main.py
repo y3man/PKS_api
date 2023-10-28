@@ -82,19 +82,21 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
 @app.get("/")
 async def root():
     return {"sitemap":
-    {"/token": "Prihlasenie a ziskanie tokenu",
-    "/link": "Zaujimava stranka",
-    "/methods": "HTTP methods and response codes",
-    "/weather": "Weather forecast in Bratislava",
-    "/currency": "Currency exchange rates (EUR, USD, GBP, CZK)",
-    "/vat": "VAT rates in EU",
-    "/vat/{country}": "VAT rate in specific country"}
-}
+                {"/token": "Prihlasenie a ziskanie tokenu",
+                 "/link": "Zaujimava stranka",
+                 "/methods": "HTTP methods and response codes",
+                 "/weather": "Weather forecast in Bratislava",
+                 "/currency": "Currency exchange rates (EUR, USD, GBP, CZK)",
+                 "/vat": "VAT rates in EU",
+                 "/vat/{country}": "VAT rate in specific country"}
+            }
+
 
 @app.get("/link")
 async def rickroll():
     return {"message": "Zaujimava stranka", "url": "bit.ly/3F3QgyV"}
     # return RedirectResponse("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
+
 
 @app.get("/methods")
 async def methods(token: Annotated[str, Depends(get_current_user)]):
@@ -102,11 +104,16 @@ async def methods(token: Annotated[str, Depends(get_current_user)]):
         response = json.load(f)
     return response
 
+
 @app.get("/weather")
 async def current_weather(token: Annotated[str, Depends(get_current_user)]):
-    request = requests.get("https://api.open-meteo.com/v1/forecast?latitude=48.1486&longitude=17.1077&daily=weathercode,temperature_2m_max,temperature_2m_min,sunrise,sunset,precipitation_sum&timezone=Europe%2FBerlin&forecast_days=1")
+    request = requests.get(
+        "https://api.open-meteo.com/v1/forecast?latitude=48.1486&longitude=17.1077&daily=weathercode,"
+        "temperature_2m_max,temperature_2m_min,sunrise,sunset,"
+        "precipitation_sum&timezone=Europe%2FBerlin&forecast_days=1")
     response = json.loads(request.text)
     return response["daily"]
+
 
 @app.get("/currency")
 async def currency_exchange(token: Annotated[str, Depends(get_current_user)]):
@@ -114,11 +121,13 @@ async def currency_exchange(token: Annotated[str, Depends(get_current_user)]):
     response = json.loads(request.text)
     return response["rates"]
 
+
 @app.get("/vat")
 async def vat(token: Annotated[str, Depends(get_current_user)]):
     request = requests.get("https://euvatrates.com/rates.json")
     response = json.loads(request.text)
     return response["rates"]
+
 
 @app.get("/vat/{country}")
 async def vat_country(country: str, token: Annotated[str, Depends(get_current_user)]):
