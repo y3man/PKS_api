@@ -18,8 +18,6 @@ def get_weather(token: str) -> str:
 token = get_token()
 print(get_weather(token))
 
-# Get currency exchange rates
-
 # Get VAT rates
 
 # Get VAT rate for specific country

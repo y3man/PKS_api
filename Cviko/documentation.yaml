@@ -1,0 +1,299 @@
+openapi: 3.0.0
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/y3man/PKS/1.0.0
+info:
+  description: This is a simple API
+  version: "1.0.0"
+  title: PKS REST api excercise
+  contact:
+    email: xtvrdak@stuba.sk
+tags:
+  - name: login
+    description: Login to make other calls
+  - name: data
+    description: Login is needed for these calls
+paths:
+  /:
+    get:
+      summary: Sitemap
+      responses:
+        '200':
+          description: Sitemap
+          content:
+            application/json:
+              schema:
+                properties:
+                  sitemap:
+                    type: object
+                    properties:
+                      "/token":
+                        type: string
+                        example: Login to get access token
+                      "/link":
+                        type: string
+                        example: Interesting link
+                      "/methods":
+                        type: string
+                        example: HTTP methods and response codes
+                      "/weather":
+                        type: string
+                        example: Weather forecast in Bratislava
+                      "/vat":
+                        type: string
+                        example: VAT rates in EU
+                      "/vat/{country}":
+                        type: string
+                        example: VAT rate in specific country
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+  /token:
+    post:
+      summary: Login page
+      tags:
+        - login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+                - username
+                - password
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+                  format: password
+      responses:
+        '200':
+          description: User logged in
+          content:
+            application/json:
+              schema:
+                properties:
+                  access_token:
+                    type: string
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzdHVkZW50IiwiZXhwIjoxNzAwNTg1ODE1fQ.7y9u7xmLrfpNG1iKefUzM9h3fZCP51Qy5R2KS0wEXB4
+                  token_type:
+                    type: string
+                    example: bearer
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /link:
+    get:
+      summary: Interesting link
+      responses:
+        '200':
+          description: Get the link
+          content:
+            application/json:
+              schema:
+                properties:
+                  message:
+                    type: string
+                    example: Interesting page
+                  url:
+                    type: string
+                    example: bit.ly/3F3QgyV
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+  /methods:
+    get:
+      summary: Information on HTTP methods and response codes
+      tags:
+        - data
+      security:
+        - ApiKeyAuth: []
+      responses:
+        '200':
+          description: Get information on HTTP methods and response codes
+          content:
+            application/json:
+              schema:
+                properties:
+                  HTTP methods:
+                    type: object
+                  HTTP status codes:
+                    type: object
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /weather:
+    get:
+      summary: Current weather in Bratislava
+      tags:
+        - data
+      security:
+        - ApiKeyAuth: []
+      responses:
+        '200':
+          description: Multiple parameters on weather in Bratislava
+          content:
+            application/json:
+              schema:
+                properties:
+                  time:
+                    type: array
+                    items:
+                      type: string
+                      example: 2023-11-21
+                  weathercode:
+                    type: array
+                    items:
+                      type: integer
+                      example: 3
+                  temperature_2m_max:
+                    type: array
+                    items:
+                      type: number
+                      example: 10.4
+                  temperature_2m_min:
+                    type: array
+                    items:
+                      type: number
+                      example: 4.8
+                  sunrise:
+                    type: array
+                    items:
+                      type: string
+                      example: 2023-11-21T07:06
+                  sunset:
+                    type: array
+                    items:
+                      type: string
+                      example: 2023-11-21T16:07
+                  pricipation_sum:
+                    type: array
+                    items:
+                      type: number
+                      example: 0.1
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /vat:
+    get:
+      description: VAT rates in EU
+      tags:
+        - data
+      security:
+        - ApiKeyAuth: []
+      responses:
+        '200':
+          description: VAT rates for EU countries, alphabetically
+          content:
+            application/json:
+              schema:
+                properties:
+                  AT:
+                    type: object
+                    properties:
+                      country:
+                        type: string
+                        example: Austria
+                      standard_rate:
+                        type: number
+                        example: 20.0
+                      reduced_rate:
+                        type: number
+                        example: 10.0
+                      reduced_rate_alt:
+                        type: number
+                        example: 13.0
+                      super_reduced_rate:
+                        type: boolean
+                        example: false
+                      parking_rate:
+                        type: number
+                        example: 12.0
+                  BE:
+                    type: object
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /vat/{country}:
+    get:
+      description: VAT rates for only one country
+      tags:
+        - data
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - in: path
+          name: country
+          schema:
+            type: string
+          required: true
+          description: Country code for an EU country you want VAT rates for
+      responses:
+        '200':
+          description: VAT rates for specified country
+          content:
+            application/json:
+              schema:
+                properties:
+                  country:
+                    type: string
+                    example: Slovakia
+                  standard_rate:
+                    type: number
+                    example: 20.0
+                  reduced_rate:
+                    type: number
+                    example: 10.0
+                  reduced_rate_alt:
+                    type: boolean
+                    example: false
+                  super_reduced_rate:
+                    type: boolean
+                    example: false
+                  parking_rate:
+                    type: boolean
+                    example: false
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/CountryNotFound'
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      description: "Standard Authorization header using bearer token."
+      type: http
+      scheme: Bearer
+  responses:
+    MethodNotAllowed:
+      description: This method is not allowed
+      content:
+        application/json:
+          schema:
+            properties:
+              detail:
+                type: string
+                example: Method Not Allowed
+    Unauthorized:
+      description: User is not authorized
+      content:
+        application/json:
+          schema:
+            properties:
+              detail:
+                type: string
+                example: Unauthorized
+    CountryNotFound:
+      description: Country not found
+      content:
+        application/json:
+          schema:
+            properties:
+              detail:
+                type: string
+                example: Country not found

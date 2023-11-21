@@ -52,7 +52,7 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Nespravne meno alebo heslo",
+            detail="Unauthorized",
             headers={"WWW-Authenticate": "Bearer"},
         )
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
@@ -64,7 +64,7 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
 async def get_current_user(token: str = Depends(oauth2_scheme)):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Neplatny token alebo neautorizovany pristup",
+        detail="Unauthorized",
         headers={"WWW-Authenticate": "Bearer"},
     )
     try:
@@ -82,11 +82,11 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
 @app.get("/")
 async def root():
     return {"sitemap":
-                {"/token": "Prihlasenie a ziskanie tokenu",
-                 "/link": "Zaujimava stranka",
+                {"/token": "Login to get access token",
+                 "/link": "Interesting link",
                  "/methods": "HTTP methods and response codes",
                  "/weather": "Weather forecast in Bratislava",
-                 "/currency": "Currency exchange rates (EUR, USD, GBP, CZK)",
+                 # "/currency": "Currency exchange rates (EUR, USD, GBP, CZK)",
                  "/vat": "VAT rates in EU",
                  "/vat/{country}": "VAT rate in specific country"}
             }
@@ -94,14 +94,38 @@ async def root():
 
 @app.get("/link")
 async def rickroll():
-    return {"message": "Zaujimava stranka", "url": "bit.ly/3F3QgyV"}
+    return {"message": "Interesting page", "url": "bit.ly/3F3QgyV"}
     # return RedirectResponse("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
 
 
 @app.get("/methods")
 async def methods(token: Annotated[str, Depends(get_current_user)]):
-    with open("methods.json", "r") as f:
-        response = json.load(f)
+    # with open("methods.json", "r") as f:
+    response = {"HTTP methods":
+        {
+            "GET": "The GET method requests a representation of the specified resource. Requests "
+                   "using GET should only retrieve data.",
+            "POST": "The POST method is used to submit an entity to the specified resource, "
+                    "often causing a change in state or side effects on the server.",
+            "PUT": "The PUT method replaces all current representations of the target resource with "
+                   "the request payload.",
+            "DELETE": "The DELETE method deletes the specified resource.",
+            "PATCH": "The PATCH method is used to apply partial modifications to a resource.",
+            "HEAD": "The HEAD method asks for a response identical to that of a GET request, "
+                    "but without the response body.",
+            "OPTIONS": "The OPTIONS method is used to describe the communication options for the "
+                       "target resource.",
+            "CONNECT": "The CONNECT method establishes a tunnel to the server identified by the "
+                       "target resource.",
+            "TRACE": "The TRACE method performs a message loop-back test along the path to the target "
+                     "resource."},
+        "HTTP status codes":
+            {"1xx Informational": "The request was received, continuing process",
+             "2xx Success": "The request was successfully received, understood, and accepted",
+             "3xx Redirection": "Further action needs to be taken in order to complete the request",
+             "4xx Client Error": "The request contains bad syntax or cannot be fulfilled",
+             "5xx Server Error": "The server failed to fulfill an apparently valid request"}
+    }
     return response
 
 
@@ -115,11 +139,11 @@ async def current_weather(token: Annotated[str, Depends(get_current_user)]):
     return response["daily"]
 
 
-@app.get("/currency")
-async def currency_exchange(token: Annotated[str, Depends(get_current_user)]):
-    request = requests.get("https://api.exchangerate.host/latest?base=EUR&symbols=USD,GBP,CZK")
-    response = json.loads(request.text)
-    return response["rates"]
+# @app.get("/currency")
+# async def currency_exchange(token: Annotated[str, Depends(get_current_user)]):
+#     request = requests.get("https://api.exchangerate.host/latest?base=EUR&symbols=USD,GBP,CZK")
+#     response = json.loads(request.text)
+#     return response["rates"]
 
 
 @app.get("/vat")
@@ -135,5 +159,5 @@ async def vat_country(country: str, token: Annotated[str, Depends(get_current_us
     try:
         response = json.loads(request.text)["rates"][country.upper()]
     except KeyError:
-        raise HTTPException(status_code=404, detail="Krajina neexistuje")
+        raise HTTPException(status_code=404, detail="Country not found")
     return response
