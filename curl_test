@@ -1,0 +1,11 @@
+curl localhost:9000/
+
+curl localhost:9000/token -X POST -F "username=student" -F "password=student" -H "Content-Type: application/json"
+
+curl localhost:9000/methods -H "Authorization: Bearer <token>"
+
+curl localhost:9000/weather -H "Authorization: Bearer <token>"
+
+curl localhost:9000/vat -H "Authorization: Bearer <token>"
+
+curl localhost:9000/vat/SK -H "Authorization: Bearer <token>"
