@@ -1,6 +1,6 @@
 curl localhost:9000/
 
-curl localhost:9000/token -X POST -F "username=student" -F "password=student" -H "Content-Type: application/json"
+curl localhost:9000/token -X POST -F "username=student" -F "password=student"
 
 curl localhost:9000/methods -H "Authorization: Bearer <token>"
 
